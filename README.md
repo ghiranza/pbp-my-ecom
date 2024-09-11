@@ -64,4 +64,4 @@ jawaban pertanyaan-pertanyaan Tugas 2:
       berkolaborasi dengan tim dengan efisien.
 
 (4) Menurut Anda, dari semua framework yang ada, mengapa framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak?
-    = Setau saya karena Django merupakan framework yang menggunakan bahasa Python 
+    = Setau saya karena Django merupakan framework yang menggunakan bahasa Python sehingga cocok untuk pemula 
