@@ -1,10 +1,111 @@
-<h1>Mental Health Tracker</h1>
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 0;
+    }
 
-<h5>Name: </h5>
-<p>{{name}}</p> 
-<h5>Price: </h5>
-<p>{{price}}</p> 
-<h5>Deskripsi: </h5>
-<p>{{deskripsi}}</p> 
-<h5>Bonus:</h5>
-<p>{{bonus}}</p>
+    .header {
+        text-align: left;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .header h1 {
+        color: #2c3e50;
+        font-size: 36px;
+        margin: 0;
+    }
+
+    .vbucks-card {
+        display: inline-block;
+        background-color: #fff;
+        width: 250px;
+        margin: 15px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        text-align: left;
+    }
+
+    .vbucks-card h5 {
+        color: #34495e;
+        font-size: 18px;
+        margin: 10px 0;
+    }
+
+    .vbucks-card p {
+        color: #7f8c8d;
+        font-size: 16px;
+        margin: 5px 0;
+    }
+
+    .vbucks-container {
+        text-align: center;
+        padding: 0 20px;
+    }
+
+    .centered-button {
+        text-align: center;
+        margin: 20px;
+    }
+
+    button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+        border-radius: 5px;
+    }
+
+    button:hover {
+        background-color: #2980b9;
+    }
+
+    .notice {
+        color: #e74c3c;
+        font-weight: bold;
+    }
+</style>
+
+<div class="header">
+    <h1>VBucks Store</h1>
+</div>
+
+{% if not vbucks_entries %}
+<p class="notice">Belum ada data VBucks pada vbucks store.</p>
+{% else %}
+<div class="vbucks-container">
+    {% for vbucks_entry in vbucks_entries %}
+    <div class="vbucks-card">
+        <h5>Name: </h5>
+        <p>{{vbucks_entry.name}}</p>
+
+        <h5>Price: </h5>
+        <p>{{vbucks_entry.price}}</p>
+
+        <h5>Description: </h5>
+        <p>{{vbucks_entry.description}}</p>
+
+        <h5>Bonus:</h5>
+        <p>{{vbucks_entry.bonus}}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="centered-button">
+    <a href="{% url 'main:create_vbucks_entry' %}">
+      <button>Add New V-Bucks Entry</button>
+    </a>
+</div>
+
+{% endblock content %}
