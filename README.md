@@ -1,3 +1,5 @@
+<details>
+  <summary>Installation Instructions</summary>
 checklist Tugas 2:
 
 (1) Membuat sebuah proyek Django baru 
@@ -65,3 +67,4 @@ jawaban pertanyaan-pertanyaan Tugas 2:
 
 (4) Menurut Anda, dari semua framework yang ada, mengapa framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak?
     = Setau saya karena Django merupakan framework yang menggunakan bahasa Python sehingga cocok untuk pemula 
+</details>
