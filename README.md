@@ -196,6 +196,10 @@ user = models.ForeignKey(User, on_delete=models.CASCADE)
     context = {
          'name': request.user.username,
 ```
-   e) 
+   e) Menambahkan import os [settings.py] dan mengganti variabel DEBUG dengan kode berikut:
+```python
+PRODUCTION = os.getenv("PRODUCTION", False)
+DEBUG = not PRODUCTION
+```
 
 </details>
