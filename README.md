@@ -1,5 +1,5 @@
 <details>
-  <summary>Installation Instructions</summary>
+  <summary>TUGAS 2</summary>
 checklist Tugas 2:
 
 (1) Membuat sebuah proyek Django baru 
