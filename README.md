@@ -70,23 +70,132 @@ jawaban pertanyaan-pertanyaan Tugas 2:
 </details>
 
 <details>
-  <summary>TUGAS 3</summary>
+  <summary>TUGAS 4</summary>
 
-checklist Tugas 3:
+checklist Tugas 4:
 1. Mengimplementasikan fungsi registrasi, login, dan logout untuk memungkinkan pengguna untuk mengakses aplikasi sebelumnya dengan lancar.
-   Saya memulai dengan penambahan import UserCreationForm pada views.py, lalu fungsi register:
-   ```
-   def register(request):
-    form = UserCreationForm()
+   a) Penambahan import UserCreationForm [views.py], lalu menambahkan fungsi register [views.py]:
+ ```python
+ def register(request):
+  form = UserCreationForm()
 
-    if request.method == "POST":
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Your account has been successfully created!')
-            return redirect('main:login')
-    context = {'form':form}
-    return render(request, 'register.html', context)
-   ```
+  if request.method == "POST":
+      form = UserCreationForm(request.POST)
+      if form.is_valid():
+          form.save()
+          messages.success(request, 'Your account has been successfully created!')
+          return redirect('main:login')
+  context = {'form':form}
+  return render(request, 'register.html', context)
+ ```
+   b) Pembuatan berkas HTML baru dengan nama register.html pada main/templates yang berisi kode seperti berikut:
+```python
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Register</title>
+{% endblock meta %}
+
+{% block content %}
+
+<div class="login">
+  <h1>Register</h1>
+
+  <form method="POST">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+      <tr>
+        <td></td>
+        <td><input type="submit" name="submit" value="Daftar" /></td>
+      </tr>
+    </table>
+  </form>
+
+  {% if messages %}
+  <ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+
+{% endblock content %}
+```
+   c) Import fungsi register ke urls.py dan tambahkan path ke urlpatterns
+   
+   **PEMBUATAN FUNGSI LOGIN**
+   d) Menambahkan import authenticate, login, dan AuthenticationForm [views.py]
+   e) Menambahkan fungsi login_user [views.py] 
+   f) Membuat berkas HTML baru dengan nama login.html pada main/templates yang berisi kode seperti berikut:
+```python
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Login</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="login">
+  <h1>Login</h1>
+
+  <form method="POST" action="">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+      <tr>
+        <td></td>
+        <td><input class="btn login_btn" type="submit" value="Login" /></td>
+      </tr>
+    </table>
+  </form>
+
+  {% if messages %}
+  <ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %} Don't have an account yet?
+  <a href="{% url 'main:register' %}">Register Now</a>
+</div>
+
+{% endblock content %}
+```
+   g) Import fungsi login_user ke urls.py dan tambahkan path ke urlpatterns
+
+   **PEMBUATAN FUNGSI LOGOUT**
+   h) Menambahkan import logout [views.py]
+   i) Menambahkan fungsi logout_user [views.py]
+   j) Menambahkan kode berikut pada main.html:
+```python
+<a href="{% url 'main:logout' %}">
+  <button>Logout</button>
+</a>
+```
+   k) Import fungsi logout_user ke urls.py dan tambahkan path ke urlpatterns
+
+2. Membuat dua akun pengguna dengan masing-masing tiga dummy data menggunakan model yang telah dibuat pada aplikasi sebelumnya untuk setiap akun di lokal.
+   Membuat akun di form register lalu mengisi seluruh field yang dibutuhkan
+   
+3. Menghubungkan model Product dengan User
+   a) Menambahkan kode berikut [models.py]:
+```python
+from django.contrib.auth.models import User
+```
+   b) Menambahkan kode berikut pada class VBucksEntry:
+```python
+user = models.ForeignKey(User, on_delete=models.CASCADE)
+```
+   c) Mengubah isi create_vbcuks_entry [views.py]
+   d) Mengubah beberapa isi dari show_main menjadi seperti berikut:
+```python
+    mood_entries = MoodEntry.objects.filter(user=request.user)
+
+    context = {
+         'name': request.user.username,
+```
+   e) 
 
 </details>
