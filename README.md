@@ -68,3 +68,25 @@ jawaban pertanyaan-pertanyaan Tugas 2:
 (4) Menurut Anda, dari semua framework yang ada, mengapa framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak?
     = Setau saya karena Django merupakan framework yang menggunakan bahasa Python sehingga cocok untuk pemula 
 </details>
+
+<details>
+  <summary>TUGAS 3</summary>
+
+checklist Tugas 3:
+1. Mengimplementasikan fungsi registrasi, login, dan logout untuk memungkinkan pengguna untuk mengakses aplikasi sebelumnya dengan lancar.
+   Saya memulai dengan penambahan import UserCreationForm pada views.py, lalu fungsi register:
+   ```
+   def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    context = {'form':form}
+    return render(request, 'register.html', context)
+   ```
+
+</details>
