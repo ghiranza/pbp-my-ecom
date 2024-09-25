@@ -69,6 +69,8 @@ jawaban pertanyaan-pertanyaan Tugas 2:
     = Setau saya karena Django merupakan framework yang menggunakan bahasa Python sehingga cocok untuk pemula 
 </details>
 
+
+
 <details>
   <summary>TUGAS 4</summary>
 
@@ -201,5 +203,58 @@ user = models.ForeignKey(User, on_delete=models.CASCADE)
 PRODUCTION = os.getenv("PRODUCTION", False)
 DEBUG = not PRODUCTION
 ```
+4. Menampilkan detail informasi pengguna yang sedang logged in seperti username dan menerapkan cookies seperti last login pada halaman utama aplikasi
+   a) Menambahkan import HttpResponseRedirect, reverse, dan datetime
+   b) Menambahkan cookie yang bernama last_login dengan cara mengubah kode if form.is_valid() menjadi sebagai berikut:
+```python
+if form.is_valid():
+    user = form.get_user()
+    login(request, user)
+    response = HttpResponseRedirect(reverse("main:show_main"))
+    response.set_cookie('last_login', str(datetime.datetime.now()))
+    return response
+```
+
+   c) Tambahkan kode berikut pada variabel context pada show_main
+```python
+'last_login': request.COOKIES['last_login'],
+```
+   d) Mengubah fungsi logout_user menjadi seperti berikut:
+```python
+def logout_user(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse('main:login'))
+    response.delete_cookie('last_login')
+    return response
+```
+   e) Menambahkan kode berikut pada main.html:
+```python
+<h5>Sesi terakhir login: {{ last_login }}</h5>
+```
+
+jawaban pertanyaan-pertanyaan Tugas 4:
+1. Apa perbedaan antara HttpResponseRedirect() dan redirect()
+   - HttpResponseRedirect(): bagian dari modul django.http, memberitahu browser bahwa URL sementara dialihkan ke URL lain
+   - redirect(): disediakan Django dalam modul django.shortcuts, berfungsi menerima lebih dari satu jenis argumen, lebih sederhana
+
+2. Menambahkan kode import ```from django.contrib.auth.models import User```, lalu menambahkan kode berikut pada class VBucksEntry: ```user = models.ForeignKey(User, on_delete=models.CASCADE)```, kemudian mengubah isi create_vbcuks_entry dan mengubah beberapa isi dari show_main menjadi seperti berikut:
+```
+    mood_entries = MoodEntry.objects.filter(user=request.user)
+
+    context = {
+         'name': request.user.username,
+```
+
+3. Apa perbedaan antara authentication dan authorization, apakah yang dilakukan saat pengguna login? Jelaskan bagaimana Django mengimplementasikan kedua konsep tersebut.
+   - Authentication: proses verifikasi identitas pengguna 
+   - Authorization: menentukan apakah pengguna yang telah terautentikasi memiliki izin untuk akses
+Yang dilakukan saat pengguna login adalah Authentication. Authentication dilaksanakan terlebih dahulu untuk mengecek apakah data pengguna sesuai dengan data yang ada pada database, baru setelah itu melakukan proses authorization.
+Django memiliki sistem authentication bawaan menggunakan model user, yaitu authenticate().
+Django mengendalikan otorisasi dengan menggunakan permission dan group, yaitu @permission_required.
+
+4. Bagaimana Django mengingat pengguna yang telah login? Jelaskan kegunaan lain dari cookies dan apakah semua cookies aman digunakan?
+Dengan penggunaan cookies. Django mengingat pengguna yang telah login menggunakan session yang disimpan di cookies dengan cara menyimpan session ID di cookies di browser pengguna.
+Kegunaan lain dari cookies selain untuk mengelola sesi login adalah untuk menyimpan preferensi pengguna dan data-data lain yang diperlukan untuk meningkatkan pengalaman pengguna.
+Meskipun cookies berguna, namun tIdak semua cookies aman. Keamanan cookies berrgantung pada bagaimana diimplementasikannya dan apakah pengaturan keamanan yang benar telah digunakan.
 
 </details>
