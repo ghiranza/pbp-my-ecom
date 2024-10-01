@@ -258,3 +258,193 @@ Kegunaan lain dari cookies selain untuk mengelola sesi login adalah untuk menyim
 Meskipun cookies berguna, namun tIdak semua cookies aman. Keamanan cookies berrgantung pada bagaimana diimplementasikannya dan apakah pengaturan keamanan yang benar telah digunakan.
 
 </details>
+
+
+
+<details>
+  <summary>TUGAS 5</summary>
+
+checklist Tugas 5:
+1. Implementasikan fungsi untuk menghapus dan mengedit product
+  a) Membuat fungsi baru bernama delete_vbucks [views.py], lalu import fungsi tersebut pada urls.py dan menambahkan path url pada urlpatterns
+```pyhton
+def delete_vbucks(request, id):
+    vbucks = VBucksEntry.objects.get(pk = id)
+    vbucks.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
+```
+  b) Menambahkan kode berikut berupa tombol untuk delete product:
+```python
+<a href="{% url 'main:delete_vbucks' vbucks_entry.pk %}">
+    <button>
+        Delete
+    </button>
+</a>
+```
+  c) Membuat fungsi baru bernama edit_vbucks [views.py], lalu import fungsi tersebut pada urls.py dan menambahkan path url pada urlpatterns
+```python
+def edit_vbucks(request, id):
+  mood = VBucksEntry.objects.get(pk = id)
+  form = VBucksEntryForm(request.POST or None, instance=vbucks)
+  if form.is_valid() and request.method == "POST":
+  form.save()
+  return HttpResponseRedirect(reverse('main:show_main'))
+  context = {'form': form}
+  return render(request, "edit_vbucks.html", context)
+```
+  c2) Menambahkan import file reverse dan HttpResponseRedirect
+  c3) Membuat edit_vbucks.html pada main/templates yang berisi kode berikut:
+```python
+<form method="POST">
+  {% csrf_token %}
+  <table>
+    {{ form.as_table }}
+    <tr>
+      <td></td>
+      <td>
+        <input type="submit" value="Edit Mood"/>
+      </td>
+    </tr>
+  </table>
+</form>
+```
+  d) Menambahkan potongan kode berikut pada main.html
+```python
+<a href="{% url 'main:edit_mood' mood_entry.pk %}">
+  <button>
+    Edit
+  </button>
+</a>
+```
+2. Kustomisasi desain pada template HTML yang telah dibuat pada tugas-tugas sebelumnya menggunakan CSS atau CSS framework (seperti Bootstrap, Tailwind, Bulma) dengan ketentuan sebagai berikut:
+- Ketentuan 1: Kustomisasi halaman login, register, dan tambah product semenarik mungkin
+  ^saya menjalankan ketentuan di atas dengan menambahkan kotak atau semacam box yang menjadi frame elemen-elemen pada halaman web
+   saya juga mengubah warna dengan membuat halaman web seakan dalam "dark mode"
+   contohnya adalah pada gambar berikut: ![tugas 5](https://github.com/user-attachments/assets/00149e0f-ea1d-4b83-a446-5ebf9f94778c)
+- Ketentuan 2: Kustomisasi halaman daftar product menjadi lebih menarik dan responsive, dengan kondisi -> Jika pada aplikasi belum ada product yang tersimpan, halaman daftar product akan menampilkan gambar dan pesan bahwa belum ada product yang terdaftar
+                                                                                                       -> Jika sudah ada product yang tersimpan, halaman daftar product akan menampilkan detail setiap product dengan menggunakan card
+  ^saya meng-custom halaman daftar product dengan cara mengubah warna web menjadi "dark mode", serta memberi warna biru gradasi pada tombol
+   contohnya seperti gambar berikut: ![tugas 5 (2)](https://github.com/user-attachments/assets/b4869e56-b588-40e9-9ea0-f4405fe33ff2)
+   jika belum ada product yang tersimpan, maka halaman di web akan menampilkan: ![tugas 5 (3)](https://github.com/user-attachments/assets/c1dedc32-d905-4ae3-a844-6b3ecbbc13fa)
+   dan jika product sudah tersimpan, product akan ditampilkan menggunakan card seperti: ![tugas 5 (4)](https://github.com/user-attachments/assets/7866fc3a-dd30-4ff2-95a0-842f7f534113)
+- Ketentuan 3: Untuk setiap card product, buatlah dua buah button untuk mengedit dan menghapus product pada card tersebut!
+  ^saya membuat kedua button pada card product tersebut dengan kode di bawah ini:
+```python
+<div class="absolute top-0 -right-4 flex space-x-1">
+    <a href="{% url 'main:edit_vbucks' vbucks_entry.pk %}" class="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full p-2 transition duration-300 shadow-md">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+        </svg>
+    </a>
+    <a href="{% url 'main:delete_vbucks' vbucks_entry.pk %}" class="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition duration-300 shadow-md">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg>
+    </a>
+</div>
+```
+   kode ini juga menempatkan kedua button tersebut pada atas kanan card product
+   berikut gambarnya: ![tugas 5 (5)](https://github.com/user-attachments/assets/a042a8d8-24d5-4630-8a48-e38f470cd937)
+- Ketentuan 4: Buatlah navigation bar (navbar) untuk fitur-fitur pada aplikasi yang responsive terhadap perbedaan ukuran device, khususnya mobile dan desktop.
+   ^untuk mobile, berikut kode saya untuk mengimplementasikan perintah di atas:
+```python
+<div class="mobile-menu hidden md:hidden px-4 w-full md:max-w-full">
+  <div class="pt-2 pb-3 space-y-1 mx-auto">
+    <a href="#" class="block text-gray-300 px-3 py-2">Home</a>
+    <a href="#" class="block text-gray-300 px-3 py-2">Products</a>
+    <a href="#" class="block text-gray-300 px-3 py-2">Categories</a>
+    <a href="#" class="block text-gray-300 px-3 py-2">Cart</a>
+   
+    {% if user.is_authenticated %}
+      <span class="block text-gray-300 px-3 py-2">Welcome, {{ user.username }}</span>
+      <a href="{% url 'main:logout' %}" class="block text-center bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+        Logout
+      </a>
+    {% else %}
+      <a href="{% url 'main:login' %}" class="block text-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 mb-2">
+        Login
+      </a>
+      <a href="{% url 'main:register' %}" class="block text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+        Register
+      </a>
+    {% endif %}
+  </div>
+</div>
+<script>
+  const btn = document.querySelector("button.mobile-menu-button");
+  const menu = document.querySelector(".mobile-menu");
+
+  btn.addEventListener("click", () => {
+    menu.classList.toggle("hidden");
+  });
+</script>
+```
+   sedangkan untuk mode desktop, berikut kodenya:
+```python
+<nav class="bg-gray-800 shadow-lg fixed top-0 left-0 z-40 w-full">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <div class="flex items-center">
+        <h1 class="text-2xl font-bold text-left text-white">V-Bucks Store</h1>
+      </div>
+     
+      <div class="flex space-x-8">
+        <a href="#" class="text-white text-sm font-medium hover:text-gray-300">Home</a>
+        <a href="#" class="text-white text-sm font-medium hover:text-gray-300">Products</a>
+        <a href="#" class="text-white text-sm font-medium hover:text-gray-300">Categories</a>
+        <a href="#" class="text-white text-sm font-medium hover:text-gray-300">Cart</a>
+      </div>
+     
+      <div class="hidden md:flex items-center">
+        {% if user.is_authenticated %}
+          <span class="text-gray-300 mr-4">Welcome, {{ user.username }}</span>
+          <a href="{% url 'main:logout' %}" class="text-center bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+            Logout
+          </a>
+        {% else %}
+          <a href="{% url 'main:login' %}" class="text-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 mr-2">
+            Login
+          </a>
+          <a href="{% url 'main:register' %}" class="text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+            Register
+          </a>
+        {% endif %}
+      </div>
+      <div class="md:hidden flex items-center">
+        <button class="mobile-menu-button">
+          <svg class="w-6 h-6 text-white" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+            <path d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+```
+   dan juga berikut lampirannya: ![tugas 5 (6)](https://github.com/user-attachments/assets/f6527af8-b05e-4299-9b4b-f8ab0bf948de)
+
+pertanyaan-pertanyaan Tugas 5:
+1. Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+= - !important (dengan inline style paling tinggi): jika suatu aturan CSS ditandai dengan !important, maka semua aturan lainnya akan disampingkan
+  - Inline styles (dalam elemen HTML): atribut style, misal ...style="color: red;"...
+  - ID selectors: #, misal #example ...
+  - Class, attribute, dan pseudo-class selectors: misal .example, [attr], dan :hover
+  - Element dan pseudo-element selectors: misal div dan p, ::before dan ::after
+
+3. Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design!
+= Penting karena memungkin tampilan web untuk menyesuaikan ukuran layar device yang berbeda-beda
+  Aplikasi yang sudah menerapkan: Google
+  Aplikasi yang belum menerapkan: Reddit (versi lama)
+ 
+5. Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+= Margin adalah jarak di luar elemen, pemisah suatu elemen dari elemen lain
+  Border adalah garis yang mengelilingi elemen
+  Padding adalah jarak antara konten elemen dan border
+  Cara mengimplementasikan ketiganya adalah sepert: ...margin: 10px;..., ...border: 2px solid black;..., ...padding: 20px;...
+
+7. Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+= Flex box merupakan sistem layout **satu dimensi** yang mengatur elemen dalam baris atau kolom secara fleksibel, sedangkan grid layout merupakan sistem **dua dimensi** yang memungkinkan penempatan elemen dalam baris dan kolom secara lebih presisi.
+  Flex box lebih cocok untuk navigasi sederhana karena mudah dan berguna untuk layout satu dimensi
+  Grid layout cocok untuk struktur yang lebih kompleks, seperti layout dengan sidebar.
+   
+</details>
