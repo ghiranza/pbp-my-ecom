@@ -1,12 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from main.forms import VBucksEntryForm
 from main.models import VBucksEntry
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import authenticate, login
-from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 import datetime
@@ -18,13 +17,17 @@ from django.urls import reverse
 def show_main(request):
     vbucks_entries = VBucksEntry.objects.filter(user=request.user)
 
+    last_login = request.COOKIES.get('last_login', 'Belum ada data login')
+
     context = {
         'name' : request.user.username,
-        'price': 'Rp20.000',
-        'description': 'you will get 500 v-bucks with extra 100',
-        'bonus':'+100',
+        'npm' : '2306165944',
+        'class' : 'PBP B',
+        # 'price': 'Rp20.000',
+        # 'description': 'you will get 500 v-bucks with extra 100',
+        # 'bonus':'+100',
         'vbucks_entries': vbucks_entries,
-        'last_login': request.COOKIES['last_login'],
+        'last_login': last_login,
     }
 
     return render(request, "main.html", context)
@@ -90,3 +93,26 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+
+def edit_vbucks(request, id):
+    # Get vbucks entry berdasarkan id
+    vbucks = VBucksEntry.objects.get(pk = id)
+
+    # Set vbucks entry sebagai instance dari form
+    form = VBucksEntryForm(request.POST or None, instance=vbucks)
+
+    if form.is_valid() and request.method == "POST":
+        # Simpan form dan kembali ke halaman awal
+        form.save()
+        return HttpResponseRedirect(reverse('main:show_main'))
+
+    context = {'form': form}
+    return render(request, "edit_vbucks.html", context)
+
+def delete_vbucks(request, id):
+    # Get vbucks berdasarkan id
+    vbucks = VBucksEntry.objects.get(pk = id)
+    # Hapus vbucks
+    vbucks.delete()
+    # Kembali ke halaman awal
+    return HttpResponseRedirect(reverse('main:show_main'))
