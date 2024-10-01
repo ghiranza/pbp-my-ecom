@@ -5,7 +5,6 @@
         <h1 class="text-2xl font-bold text-left text-white">V-Bucks Store</h1> 
       </div>
       
-      <!-- Tambahan Navigasi -->
       <div class="flex space-x-8">
         <a href="#" class="text-white text-sm font-medium hover:text-gray-300">Home</a>
         <a href="#" class="text-white text-sm font-medium hover:text-gray-300">Products</a>
@@ -39,35 +38,33 @@
   </div>
 </nav>
 
-  <!-- Mobile menu -->
-  <div class="mobile-menu hidden md:hidden px-4 w-full md:max-w-full">
-    <div class="pt-2 pb-3 space-y-1 mx-auto">
-      <a href="#" class="block text-gray-300 px-3 py-2">Home</a>
-      <a href="#" class="block text-gray-300 px-3 py-2">Products</a>
-      <a href="#" class="block text-gray-300 px-3 py-2">Categories</a>
-      <a href="#" class="block text-gray-300 px-3 py-2">Cart</a>
-      
-      {% if user.is_authenticated %}
-        <span class="block text-gray-300 px-3 py-2">Welcome, {{ user.username }}</span>
-        <a href="{% url 'main:logout' %}" class="block text-center bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300">
-          Logout
-        </a>
-      {% else %}
-        <a href="{% url 'main:login' %}" class="block text-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 mb-2">
-          Login
-        </a>
-        <a href="{% url 'main:register' %}" class="block text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">
-          Register
-        </a>
-      {% endif %}
-    </div>
+<div class="mobile-menu hidden md:hidden px-4 w-full md:max-w-full">
+  <div class="pt-2 pb-3 space-y-1 mx-auto">
+    <a href="#" class="block text-gray-300 px-3 py-2">Home</a>
+    <a href="#" class="block text-gray-300 px-3 py-2">Products</a>
+    <a href="#" class="block text-gray-300 px-3 py-2">Categories</a>
+    <a href="#" class="block text-gray-300 px-3 py-2">Cart</a>
+    
+    {% if user.is_authenticated %}
+      <span class="block text-gray-300 px-3 py-2">Welcome, {{ user.username }}</span>
+      <a href="{% url 'main:logout' %}" class="block text-center bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+        Logout
+      </a>
+    {% else %}
+      <a href="{% url 'main:login' %}" class="block text-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 mb-2">
+        Login
+      </a>
+      <a href="{% url 'main:register' %}" class="block text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+        Register
+      </a>
+    {% endif %}
   </div>
-  <script>
-    const btn = document.querySelector("button.mobile-menu-button");
-    const menu = document.querySelector(".mobile-menu");
+</div>
+<script>
+  const btn = document.querySelector("button.mobile-menu-button");
+  const menu = document.querySelector(".mobile-menu");
 
-    btn.addEventListener("click", () => {
-      menu.classList.toggle("hidden");
-    });
-  </script>
-</nav>
+  btn.addEventListener("click", () => {
+    menu.classList.toggle("hidden");
+  });
+</script>
