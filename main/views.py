@@ -12,11 +12,12 @@ import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+
 # Create your views here.
 @login_required(login_url='/login')
 def show_main(request):
-    vbucks_entries = VBucksEntry.objects.filter(user=request.user)
-
     last_login = request.COOKIES.get('last_login', 'Belum ada data login')
 
     context = {
@@ -26,7 +27,6 @@ def show_main(request):
         # 'price': 'Rp20.000',
         # 'description': 'you will get 500 v-bucks with extra 100',
         # 'bonus':'+100',
-        'vbucks_entries': vbucks_entries,
         'last_login': last_login,
     }
 
@@ -45,11 +45,11 @@ def create_vbucks_entry(request):
     return render(request, "create_vbucks_entry.html", context)
 
 def show_xml(request):
-    data = VBucksEntry.objects.all()
+    data = VBucksEntry.objects.filter(user=request.user) 
     return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
 
 def show_json(request):
-    data = VBucksEntry.objects.all()
+    data = VBucksEntry.objects.filter(user=request.user) 
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 def show_xml_by_id(request, id):
@@ -82,6 +82,8 @@ def login_user(request):
         response = HttpResponseRedirect(reverse("main:show_main"))
         response.set_cookie('last_login', str(datetime.datetime.now()))
         return response
+      else:
+        messages.error(request, "Invalid username or password. Please try again.")
 
    else:
       form = AuthenticationForm(request)
@@ -116,3 +118,20 @@ def delete_vbucks(request, id):
     vbucks.delete()
     # Kembali ke halaman awal
     return HttpResponseRedirect(reverse('main:show_main'))
+
+@csrf_exempt
+@require_POST
+def add_vbucks_entry_ajax(request):
+    name = strip_tags(request.POST.get("name"))
+    description = strip_tags(request.POST.get("description"))
+    bonus = request.POST.get("bonus")
+    user = request.user
+
+    new_vbucks = VBucksEntry(
+        name=name, description=description,
+        bonus=bonus,
+        user=user
+    )
+    new_vbucks.save()
+
+    return HttpResponse(b"CREATED", status=201)

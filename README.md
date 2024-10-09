@@ -448,3 +448,124 @@ pertanyaan-pertanyaan Tugas 5:
   Grid layout cocok untuk struktur yang lebih kompleks, seperti layout dengan sidebar.
    
 </details>
+
+
+
+<details>
+  <summary>TUGAS 6</summary>
+
+checklist Tugas 6:
+AJAX GET
+1. Ubahlah kode cards data mood agar dapat mendukung AJAX GET.
+= menambahkan potongan kode berikut untuk mengambil data dari server dan menampilkan entri secara dinamis tanpa reload halaman [main.html]:
+```python
+async function getVBucksEntries() {
+    return fetch("{% url 'main:show_json' %}").then((res) => res.json())
+}
+
+async function refreshVBucksEntries() {
+    document.getElementById("vbucks_entry_cards").innerHTML = "";
+    const vbucksEntries = await getVBucksEntries();
+    let htmlString = "";
+
+    if (vbucksEntries.length === 0) {
+        htmlString = `
+            ...
+        `;
+    }
+    else {
+        vbucksEntries.forEach((item) => {
+            const name = DOMPurify.sanitize(item.fields.name);
+            const description = DOMPurify.sanitize(item.fields.description);
+            htmlString += `
+            ...
+            `;
+        });
+    }
+    document.getElementById("vbucks_entry_cards").className = classNameString;
+    document.getElementById("vbucks_entry_cards").innerHTML = htmlString;
+}
+refreshVBucksEntries();
+```
+
+2. Lakukan pengambilan data mood menggunakan AJAX GET. Pastikan bahwa data yang diambil hanyalah data milik pengguna yang logged-in.
+= menambahkan potongan kode berikut dalam fungsi show_json() untuk meng-filter berdasarkan pengguna yang sedang login [views.py]:
+```python
+def show_json(request):
+    data = VBucksEntry.objects.filter(user=request.user) 
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+```
+
+AJAX POST
+1. Buatlah sebuah tombol yang membuka sebuah modal dengan form untuk menambahkan mood.
+= menambahkan potongan kode berikut untuk menambahkan data mood baru melalui AJAX [main.html]"
+```python
+<button data-modal-target="crudModal" data-modal-toggle="crudModal" class="text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105" style="background: linear-gradient(to right, #1B90DD, #5FCEEA);" onclick="showModal();">
+    Add New VBucks Entry by AJAX
+</button>
+```
+
+2. Buatlah fungsi view baru untuk menambahkan mood baru ke dalam basis data.
+= menambahkan view baru add_vbucks_entry_ajax untuk menangani POST request dari form [views.py]:
+```python
+@csrf_exempt
+@require_POST
+def add_vbucks_entry_ajax(request):
+    name = strip_tags(request.POST.get("name"))
+    description = strip_tags(request.POST.get("description"))
+    bonus = request.POST.get("bonus")
+    user = request.user
+
+    new_vbucks = VBucksEntry(
+        name=name, description=description,
+        bonus=bonus,
+        user=user
+    )
+    new_vbucks.save()
+
+    return HttpResponse(b"CREATED", status=201)
+```
+
+3. Buatlah path /create-ajax/ yang mengarah ke fungsi view yang baru kamu buat.
+= menambahkan path berikut dalam [urls.py]:
+```pyhton
+path('create-vbucks-entry-ajax', add_vbucks_entry_ajax, name='add_vbucks_entry_ajax'),
+```
+
+4. Hubungkan form yang telah kamu buat di dalam modal kamu ke path /create-ajax/.
+= menambahkan fungsi addVBucksEntry() yang mengirimkan data form ke path /create-vbucks-entry-ajax/ [main.html]:
+```python
+function addVBucksEntry() {
+  fetch("{% url 'main:add_vbucks_entry_ajax' %}", {
+    method: "POST",
+    body: new FormData(document.querySelector('#vbucksEntryForm')),
+  })
+  .then(response => refreshVBucksEntries())
+
+  document.getElementById("vbucksEntryForm").reset(); 
+  document.querySelector("[data-modal-toggle='crudModal']").click();
+
+  return false;
+}
+```
+
+5. Lakukan refresh pada halaman utama secara asinkronus untuk menampilkan daftar mood terbaru tanpa reload halaman utama secara keseluruhan.
+= pada fungsi addVBucksentry(), saya memanggil fungsi refreshVBucksEntries() untuk memperbarui daftar entri mood secara dinamis [main.html]. Berikut potongan kodenya:
+```python
+.then(response => refreshVBucksEntries())
+```
+
+pertanyaan-pertanyaan Tugas 6:
+1. Jelaskan manfaat dari penggunaan JavaScript dalam pengembangan aplikasi web!
+= JavaScript memungkinkan fungsionalitas yang interaktif dan dinamis di dalam halaman web. JavaScript sangat bermanfaat karena dapat memperbarui dan mengubah HTML & CSS dengan cepat, menangani peristiwa user seperti klik dan pengiriman formulir, melakukan validasi data sisi klien, dan membuat permintaan asinkron ke server (AJAX), semuanya tanpa memuat ulang halaman. Sehingga, JavaScript membuat pengalaman pengguna yang lebih baik, interaksi yang lebih cepat, dan interaktivitas yang lebih baik.
+
+2. Jelaskan fungsi dari penggunaan await ketika kita menggunakan fetch()! Apa yang akan terjadi jika kita tidak menggunakan await?
+=  kata kunci **await** dalam fetch fetch() digunakan untuk menghentikan sementara eksekusi kode, hingga operasi fetch asinkron selesai dan mengembalikan hasil. jika tidak menggunakan **await**, kode akan terus dieksekusi saat permintaan fetch masih tertunda, menyebabkan data yang tidak lengkap atau tidak terdefinisi digunakan dalam operasi berikutnya.
+
+3. Mengapa kita perlu menggunakan decorator csrf_exempt pada view yang akan digunakan untuk AJAX POST?
+= csrf_exempt digunakan untuk mem-bypass proteksi CSRF untuk tampilan spesifik yang menangani permintaan AJAX POST. 
+
+4. Pada tutorial PBP minggu ini, pembersihan data input pengguna dilakukan di belakang (backend) juga. Mengapa hal tersebut tidak dilakukan di frontend saja?
+= hanya mengandalkan validasi frontend itu tidak aman. Validasi frontend dapat dilewati atau dimanipulasi oleh user dengan penggunaan skrip berbahaya. Dengan memvalidasi dan membersihkan input di backend, kita memastikan bahwa hanya data yang aman dan valid yang mencapai logika inti dan database aplikasi kita.
+
+</details>
